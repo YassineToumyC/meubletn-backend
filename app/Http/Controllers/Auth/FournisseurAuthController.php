@@ -60,7 +60,11 @@ class FournisseurAuthController extends Controller
         $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
+            'remember' => ['boolean'],
         ]);
+
+        $remember  = $request->boolean('remember');
+        $expiresAt = $remember ? now()->addDays(30) : now()->addHours(24);
 
         // Try fournisseur (User with role=fournisseur)
         $user = User::where('email', $request->email)
@@ -72,8 +76,8 @@ class FournisseurAuthController extends Controller
             if ($fournisseur?->statut === 'suspendu') {
                 return response()->json(['message' => 'Votre compte a été suspendu.'], 403);
             }
-            $user->tokens()->delete();
-            $token = $user->createToken('fournisseur-token')->plainTextToken;
+            if (! $remember) $user->tokens()->delete();
+            $token = $user->createToken('fournisseur-token', ['*'], $expiresAt)->plainTextToken;
             return response()->json([
                 'message' => 'Connexion réussie.',
                 'user'    => $this->formatFournisseur($user, $fournisseur),
@@ -87,8 +91,8 @@ class FournisseurAuthController extends Controller
             if (! $agent->is_active) {
                 return response()->json(['message' => 'Votre compte agent est désactivé.'], 403);
             }
-            $agent->tokens()->delete();
-            $token = $agent->createToken('agent-token')->plainTextToken;
+            if (! $remember) $agent->tokens()->delete();
+            $token = $agent->createToken('agent-token', ['*'], $expiresAt)->plainTextToken;
             return response()->json([
                 'message' => 'Connexion réussie.',
                 'user'    => $this->formatAgent($agent),

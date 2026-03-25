@@ -65,6 +65,7 @@ class ClientAuthController extends Controller
         $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
+            'remember' => ['boolean'],
         ]);
 
         $user = User::where('email', $request->email)
@@ -77,11 +78,14 @@ class ClientAuthController extends Controller
             ]);
         }
 
-        if (! $request->boolean('remember')) {
+        $remember  = $request->boolean('remember');
+        $expiresAt = $remember ? now()->addDays(30) : now()->addHours(24);
+
+        if (! $remember) {
             $user->tokens()->delete();
         }
 
-        $token = $user->createToken('client-token')->plainTextToken;
+        $token = $user->createToken('client-token', ['*'], $expiresAt)->plainTextToken;
 
         return response()->json([
             'message' => 'Connexion réussie.',

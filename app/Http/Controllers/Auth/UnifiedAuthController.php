@@ -28,7 +28,11 @@ class UnifiedAuthController extends Controller
         $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'string'],
+            'remember' => ['boolean'],
         ]);
+
+        $remember   = $request->boolean('remember');
+        $expiresAt  = $remember ? now()->addDays(30) : now()->addHours(24);
 
         // ── 1. Try User (client OR fournisseur) ──────────────────
         $user = User::where('email', $request->email)->first();
@@ -40,8 +44,8 @@ class UnifiedAuthController extends Controller
                 if ($fournisseur?->statut === 'suspendu') {
                     return response()->json(['message' => 'Votre compte a été suspendu.'], 403);
                 }
-                $user->tokens()->delete();
-                $token = $user->createToken('fournisseur-token')->plainTextToken;
+                if (! $remember) $user->tokens()->delete();
+                $token = $user->createToken('fournisseur-token', ['*'], $expiresAt)->plainTextToken;
 
                 return response()->json([
                     'type'  => 'fournisseur',
@@ -65,8 +69,8 @@ class UnifiedAuthController extends Controller
 
             // role = client
             $client = $user->client;
-            $user->tokens()->delete();
-            $token = $user->createToken('client-token')->plainTextToken;
+            if (! $remember) $user->tokens()->delete();
+            $token = $user->createToken('client-token', ['*'], $expiresAt)->plainTextToken;
 
             return response()->json([
                 'type'  => 'client',
@@ -93,8 +97,8 @@ class UnifiedAuthController extends Controller
             if (! $agent->is_active) {
                 return response()->json(['message' => 'Votre compte agent est désactivé.'], 403);
             }
-            $agent->tokens()->delete();
-            $token = $agent->createToken('agent-token')->plainTextToken;
+            if (! $remember) $agent->tokens()->delete();
+            $token = $agent->createToken('agent-token', ['*'], $expiresAt)->plainTextToken;
 
             return response()->json([
                 'type'  => 'agent',
