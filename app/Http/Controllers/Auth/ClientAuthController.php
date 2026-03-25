@@ -48,7 +48,12 @@ class ClientAuthController extends Controller
             'interests'   => $validated['interests'] ?? [],
         ]);
 
-        $token = $user->createToken('client-token')->plainTextToken;
+        $newToken = $user->createToken('client-token', ['*'], now()->addDays(30));
+        $newToken->accessToken->update([
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        $token = $newToken->plainTextToken;
 
         return response()->json([
             'message' => 'Inscription réussie.',
@@ -85,7 +90,12 @@ class ClientAuthController extends Controller
             $user->tokens()->delete();
         }
 
-        $token = $user->createToken('client-token', ['*'], $expiresAt)->plainTextToken;
+        $newToken = $user->createToken('client-token', ['*'], $expiresAt);
+        $newToken->accessToken->update([
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        $token = $newToken->plainTextToken;
 
         return response()->json([
             'message' => 'Connexion réussie.',
@@ -163,7 +173,12 @@ class ClientAuthController extends Controller
 
         $user->tokens()->delete();
         $user->update(['password' => $request->password]);
-        $token = $user->createToken('client-token')->plainTextToken;
+        $newToken = $user->createToken('client-token', ['*'], now()->addDays(30));
+        $newToken->accessToken->update([
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        $token = $newToken->plainTextToken;
 
         return response()->json(['message' => 'Mot de passe modifié.', 'token' => $token]);
     }

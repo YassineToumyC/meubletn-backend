@@ -9,6 +9,7 @@ use App\Http\Controllers\Dashboard\AgentController;
 use App\Http\Controllers\Dashboard\AnnouncementDashboardController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
 
 // ── Unified login (all user types) ────────────────────────────
@@ -31,6 +32,9 @@ Route::prefix('auth')->group(function () {
         Route::put('password',    [ClientAuthController::class, 'changePassword']);
         Route::post('logout',     [ClientAuthController::class, 'logout']);
         Route::post('logout-all', [ClientAuthController::class, 'logoutAll']);
+        Route::get('sessions',            [SessionController::class, 'index']);
+        Route::delete('sessions/{id}',    [SessionController::class, 'destroy']);
+        Route::delete('sessions',         [SessionController::class, 'destroyOthers']);
     });
 });
 
@@ -57,4 +61,9 @@ Route::prefix('dashboard')->middleware('auth:sanctum,agent')->group(function () 
     Route::put('profile',          [ProfileController::class, 'update']);
     Route::put('profile/password', [ProfileController::class, 'changePassword']);
     Route::apiResource('agents',   AgentController::class)->except(['show']);
+
+    // Sessions
+    Route::get('sessions',            [SessionController::class, 'index']);
+    Route::delete('sessions/{id}',    [SessionController::class, 'destroy']);
+    Route::delete('sessions',         [SessionController::class, 'destroyOthers']);
 });

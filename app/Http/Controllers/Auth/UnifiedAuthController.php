@@ -45,7 +45,12 @@ class UnifiedAuthController extends Controller
                     return response()->json(['message' => 'Votre compte a été suspendu.'], 403);
                 }
                 if (! $remember) $user->tokens()->delete();
-                $token = $user->createToken('fournisseur-token', ['*'], $expiresAt)->plainTextToken;
+                $newToken = $user->createToken('fournisseur-token', ['*'], $expiresAt);
+                $newToken->accessToken->update([
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+                $token = $newToken->plainTextToken;
 
                 return response()->json([
                     'type'  => 'fournisseur',
@@ -70,7 +75,12 @@ class UnifiedAuthController extends Controller
             // role = client
             $client = $user->client;
             if (! $remember) $user->tokens()->delete();
-            $token = $user->createToken('client-token', ['*'], $expiresAt)->plainTextToken;
+            $newToken = $user->createToken('client-token', ['*'], $expiresAt);
+            $newToken->accessToken->update([
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+            $token = $newToken->plainTextToken;
 
             return response()->json([
                 'type'  => 'client',
@@ -98,7 +108,12 @@ class UnifiedAuthController extends Controller
                 return response()->json(['message' => 'Votre compte agent est désactivé.'], 403);
             }
             if (! $remember) $agent->tokens()->delete();
-            $token = $agent->createToken('agent-token', ['*'], $expiresAt)->plainTextToken;
+            $newToken = $agent->createToken('agent-token', ['*'], $expiresAt);
+            $newToken->accessToken->update([
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+            $token = $newToken->plainTextToken;
 
             return response()->json([
                 'type'  => 'agent',

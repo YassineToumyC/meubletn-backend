@@ -42,7 +42,12 @@ class FournisseurAuthController extends Controller
             'nom_entreprise' => $validated['nom_entreprise'],
         ]);
 
-        $token = $user->createToken('fournisseur-token')->plainTextToken;
+        $newToken = $user->createToken('fournisseur-token', ['*'], now()->addDays(30));
+        $newToken->accessToken->update([
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        $token = $newToken->plainTextToken;
 
         return response()->json([
             'message' => 'Compte fournisseur créé avec succès.',
@@ -77,7 +82,12 @@ class FournisseurAuthController extends Controller
                 return response()->json(['message' => 'Votre compte a été suspendu.'], 403);
             }
             if (! $remember) $user->tokens()->delete();
-            $token = $user->createToken('fournisseur-token', ['*'], $expiresAt)->plainTextToken;
+            $newToken = $user->createToken('fournisseur-token', ['*'], $expiresAt);
+            $newToken->accessToken->update([
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+            $token = $newToken->plainTextToken;
             return response()->json([
                 'message' => 'Connexion réussie.',
                 'user'    => $this->formatFournisseur($user, $fournisseur),
@@ -92,7 +102,12 @@ class FournisseurAuthController extends Controller
                 return response()->json(['message' => 'Votre compte agent est désactivé.'], 403);
             }
             if (! $remember) $agent->tokens()->delete();
-            $token = $agent->createToken('agent-token', ['*'], $expiresAt)->plainTextToken;
+            $newToken = $agent->createToken('agent-token', ['*'], $expiresAt);
+            $newToken->accessToken->update([
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+            $token = $newToken->plainTextToken;
             return response()->json([
                 'message' => 'Connexion réussie.',
                 'user'    => $this->formatAgent($agent),
