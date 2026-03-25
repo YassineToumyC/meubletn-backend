@@ -38,11 +38,12 @@ class AnnouncementController extends Controller
         }
 
         // Sorting
-        if ($request->input('sort') === 'popular') {
-            $query->orderByDesc('views');
-        } else {
-            $query->latest();
-        }
+        match ($request->input('sort')) {
+            'popular'    => $query->orderByDesc('views'),
+            'price_asc'  => $query->orderBy('price'),
+            'price_desc' => $query->orderByDesc('price'),
+            default      => $query->latest(),
+        };
 
         $perPage = min((int) $request->input('per_page', 20), 50);
         $page = $query->paginate($perPage);
