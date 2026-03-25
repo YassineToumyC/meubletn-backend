@@ -4,7 +4,7 @@ FROM dunglas/frankenphp:1-php8.4
 RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 # PHP extensions
-RUN install-php-extensions pdo_mysql gd zip exif ftp opcache @composer
+RUN install-php-extensions pdo_mysql pdo_pgsql gd zip exif ftp opcache @composer
 
 # PHP upload limits
 RUN echo "upload_max_filesize = 100M" > /usr/local/etc/php/conf.d/uploads.ini \
