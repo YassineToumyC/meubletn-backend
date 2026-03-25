@@ -1,21 +1,10 @@
 {
     frankenphp
-    admin off
 }
 
 :80 {
     root * /app/public
     encode gzip
 
-    # Health check
-    respond /up 200
-
-    route {
-        php_server
-    }
-
-    log {
-        output stderr
-        level WARN
-    }
+    php_server
 }
