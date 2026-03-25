@@ -1,8 +1,4 @@
 #!/bin/sh
-set -e
-
-echo "→ Generating app key if missing..."
-php artisan key:generate --no-interaction --force 2>/dev/null || true
 
 echo "→ Running migrations..."
 php artisan migrate --force --no-interaction
