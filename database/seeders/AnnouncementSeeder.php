@@ -74,7 +74,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'canapes',
                 'views'       => 245,
                 'images'      => [
-                    $this->img('1493666438817-9b4a94bb7b3a'),
+                    $this->pexels(8135277), // Gray cushioned sofa
                 ],
             ],
             [
@@ -143,7 +143,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'etageres',
                 'views'       => 134,
                 'images'      => [
-                    $this->img('1481277542470-c1e3c9e32f23'),
+                    $this->pexels(271753), // White living room with bookshelf units
                 ],
             ],
             [
@@ -160,7 +160,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'lits-literie',
                 'views'       => 502,
                 'images'      => [
-                    $this->img('1631679706909-1972bec3c06f'),
+                    $this->pexels(3201761), // Gray beddings with upholstered headboard
                     $this->img('1505693416388-ac5ce068fe85'),
                 ],
             ],
@@ -246,7 +246,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'chaises',
                 'views'       => 211,
                 'images'      => [
-                    $this->img('1503602642458-232111c1f7ce'),
+                    $this->pexels(15268897), // Aesthetic interior with velvet chairs
                     $this->pexels(1581384), // Restaurant table and chairs
                 ],
             ],
@@ -376,7 +376,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'tapis',
                 'views'       => 390,
                 'images'      => [
-                    $this->img('1506440027765-4fbf89cfe8e0'),
+                    $this->pexels(7061404), // Contemporary sofa with cushions showing rug
                     $this->pexels(33961431), // Traditional Moroccan rugs
                 ],
             ],
@@ -394,7 +394,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'coussins',
                 'views'       => 122,
                 'images'      => [
-                    $this->img('1540546276925-6b42e6b34124'),
+                    $this->pexels(7535045), // Couch with decorative cushions
                 ],
             ],
             [
