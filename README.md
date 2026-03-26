@@ -1,59 +1,205 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# meubletn — Documentation de déploiement
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plateforme de foire digitale du meuble en Tunisie.
+Architecture : **Frontend Nuxt 3** + **Backend Laravel** déployés séparément via **Dokploy**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Structure du projet
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```
+meubletn/
+├── frontend/        ← Application Nuxt 3 (Vue.js)
+│   ├── Dockerfile
+│   ├── nuxt.config.ts
+│   └── app/
+│       ├── pages/
+│       ├── components/
+│       ├── composables/
+│       └── layouts/
+│
+└── backend/         ← API Laravel 12 (PHP 8.4)
+    ├── Dockerfile
+    ├── Caddyfile
+    ├── entrypoint.sh
+    └── app/
+        ├── Http/Controllers/
+        ├── Models/
+        └── ...
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Stratégie de branches
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Branche    | Rôle                                      |
+|------------|-------------------------------------------|
+| `master`   | **Production** — page "coming soon" active, stable |
+| `test`     | **Développement** — site complet visible, pour tester les nouvelles fonctionnalités |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> **Règle** : on développe sur `test`, on merge vers `master` uniquement quand une fonctionnalité est validée.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Outils de déploiement
 
-### Premium Partners
+### Dokploy
+Dokploy est la plateforme de déploiement utilisée. Elle gère deux services Docker indépendants :
+- `meubletn-frontend` → pointe vers le repo frontend
+- `meubletn-backend` → pointe vers le repo backend
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Chaque service est lié à une branche Git. Quand on veut tester la branche `test` :
+1. Aller dans Dokploy → Settings du service → Source → changer la branche de `master` à `test`
+2. Cliquer **Redeploy**
+3. Pour revenir en production, remettre `master` et redéployer
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Déploiement Backend (Laravel)
 
-## Code of Conduct
+### Fichiers clés
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### `backend/Dockerfile`
+```dockerfile
+FROM dunglas/frankenphp:1-php8.4
+```
+- Utilise **FrankenPHP** comme serveur PHP (remplace Apache/Nginx+PHP-FPM)
+- Installe les extensions PHP : `pdo_mysql`, `gd`, `zip`, `exif`, `opcache`, `composer`
+- Configure les limites d'upload : 100 Mo fichier, 150 Mo POST, 512 Mo mémoire
+- Copie le code et donne les permissions à `storage/` et `bootstrap/cache/`
+- Expose le port **81**
 
-## Security Vulnerabilities
+#### `backend/entrypoint.sh`
+Script exécuté au démarrage du container. Il effectue dans l'ordre :
+```sh
+php artisan migrate --force        # Applique les migrations en base
+php artisan storage:link           # Crée le lien symbolique storage → public/storage
+php artisan config:cache           # Cache la configuration Laravel
+php artisan route:cache            # Cache les routes pour les performances
+frankenphp run --config /etc/caddy/Caddyfile  # Démarre le serveur
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### `backend/Caddyfile`
+Configuration du serveur web FrankenPHP/Caddy :
+```caddy
+{
+    frankenphp
+}
 
-## License
+:81 {
+    root * /app/public
+    encode gzip
+    php_server
+}
+```
+- Écoute sur le port `81`
+- Sert les fichiers statiques depuis `/app/public`
+- Active la compression gzip
+- Passe toutes les requêtes PHP à FrankenPHP
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Variables d'environnement backend (à configurer dans Dokploy)
+```env
+APP_KEY=base64:...
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=mysql
+DB_HOST=...
+DB_PORT=3306
+DB_DATABASE=meubletn
+DB_USERNAME=...
+DB_PASSWORD=...
+FILESYSTEM_DISK=public
+```
+
+---
+
+## Déploiement Frontend (Nuxt 3)
+
+### Fichiers clés
+
+#### `frontend/Dockerfile`
+```dockerfile
+FROM node:23-alpine
+```
+- Utilise Node.js 23 (Alpine Linux, image légère)
+- Installe les dépendances npm
+- Expose le port **3002**
+- **Important** : le build Nuxt se fait au démarrage du container (pas pendant l'image) pour que les variables d'environnement `NUXT_PUBLIC_*` soient prises en compte :
+```sh
+CMD ["sh", "-c", "npm run build && node .output/server/index.mjs"]
+```
+
+> Cette approche permet de changer les URLs de l'API via des variables d'environnement sans reconstruire l'image Docker.
+
+#### `frontend/nuxt.config.ts`
+```ts
+runtimeConfig: {
+  public: {
+    apiBase:     'http://localhost:8000/api',      // URL de l'API backend
+    storageBase: 'http://localhost:8000/storage',  // URL des fichiers média
+  },
+}
+```
+Ces valeurs sont les valeurs par défaut (développement local). En production, elles sont surchargées par les variables d'environnement Dokploy.
+
+### Variables d'environnement frontend (à configurer dans Dokploy)
+```env
+NUXT_PUBLIC_API_BASE=https://api.meubletn.tn/api
+NUXT_PUBLIC_STORAGE_BASE=https://api.meubletn.tn/storage
+```
+
+---
+
+## Flow de déploiement complet
+
+```
+Développement local
+        │
+        ▼
+   git push test          ← toujours tester sur la branche test d'abord
+        │
+        ▼
+  Dokploy (test)          ← vérifier que tout fonctionne sur l'environnement test
+        │
+        ▼ (validation OK)
+   merge test → master
+        │
+        ▼
+  git push master
+        │
+        ▼
+  Dokploy (master)        ← redéploiement automatique ou manuel en production
+```
+
+---
+
+## Développement local
+
+### Backend
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve          # Lance sur http://localhost:8000
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+# Créer .env avec :
+# NUXT_PUBLIC_API_BASE=http://localhost:8000/api
+# NUXT_PUBLIC_STORAGE_BASE=http://localhost:8000/storage
+npm run dev               # Lance sur http://localhost:3000
+```
+
+---
+
+## Résumé des ports
+
+| Service    | Port local | Port Docker |
+|------------|-----------|-------------|
+| Frontend   | 3000      | 3002        |
+| Backend    | 8000      | 81          |
