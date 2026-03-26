@@ -16,16 +16,16 @@ class AnnouncementSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    // ID Unsplash confirmé
+    // ID Unsplash vérifié
     private function img(string $id): string
     {
         return "https://images.unsplash.com/photo-{$id}?w=800&q=80&fit=crop&auto=format";
     }
 
-    // Loremflickr : même keyword+lock = toujours la même photo Flickr
-    private function flick(string $keyword, int $lock): string
+    // Pexels : images stables avec ID vérifié, correspondant au sujet
+    private function pexels(int $id): string
     {
-        return "https://loremflickr.com/800/600/{$keyword}?lock={$lock}";
+        return "https://images.pexels.com/photos/{$id}/pexels-photo-{$id}.jpeg?auto=compress&cs=tinysrgb&w=800";
     }
 
     public function run(): void
@@ -91,7 +91,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'fauteuils',
                 'views'       => 178,
                 'images'      => [
-                    $this->flick('armchair', 42),
+                    $this->pexels(5490303), // Interior of living room with sofa and armchair
                 ],
             ],
             [
@@ -109,7 +109,7 @@ class AnnouncementSeeder extends Seeder
                 'views'       => 421,
                 'images'      => [
                     $this->img('1501045661006-fcebe0257c3f'),
-                    $this->flick('coffee-table', 7),
+                    $this->pexels(4846106), // Cozy living room with armchair and coffee table
                 ],
             ],
             [
@@ -178,7 +178,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'armoires-placards',
                 'views'       => 289,
                 'images'      => [
-                    $this->flick('wardrobe', 5),
+                    $this->pexels(14547145), // TV and wardrobe with mirror in bedroom
                 ],
             ],
             [
@@ -195,7 +195,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'matelas',
                 'views'       => 198,
                 'images'      => [
-                    $this->flick('mattress', 3),
+                    $this->pexels(376531), // Brown bed and white mattress
                 ],
             ],
             [
@@ -212,7 +212,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'commodes',
                 'views'       => 156,
                 'images'      => [
-                    $this->flick('dresser,drawers', 11),
+                    $this->pexels(8135253), // White vintage chest of drawers
                 ],
             ],
             [
@@ -247,7 +247,7 @@ class AnnouncementSeeder extends Seeder
                 'views'       => 211,
                 'images'      => [
                     $this->img('1503602642458-232111c1f7ce'),
-                    $this->flick('velvet-chair', 8),
+                    $this->pexels(1581384), // Restaurant table and chairs
                 ],
             ],
             [
@@ -320,7 +320,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'lampes-table',
                 'views'       => 97,
                 'images'      => [
-                    $this->flick('table-lamp', 12),
+                    $this->pexels(5849392), // Room interior with lamp and vases on table
                 ],
             ],
             [
@@ -337,7 +337,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'appliques-murales',
                 'views'       => 74,
                 'images'      => [
-                    $this->flick('wall-sconce', 4),
+                    $this->pexels(631411), // Turned-on lamp sconces on wall
                 ],
             ],
 
@@ -377,7 +377,7 @@ class AnnouncementSeeder extends Seeder
                 'views'       => 390,
                 'images'      => [
                     $this->img('1506440027765-4fbf89cfe8e0'),
-                    $this->flick('rug', 15),
+                    $this->pexels(33961431), // Traditional Moroccan rugs
                 ],
             ],
             [
@@ -411,7 +411,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'vases',
                 'views'       => 87,
                 'images'      => [
-                    $this->flick('ceramic-vase', 8),
+                    $this->pexels(3733769), // Dried plants in ceramic vase on wooden stool
                 ],
             ],
             [
@@ -428,7 +428,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'tableaux-art-mural',
                 'views'       => 203,
                 'images'      => [
-                    $this->flick('abstract-painting', 4),
+                    $this->pexels(3987574), // Abstract art painting on canvas
                 ],
             ],
             [
@@ -445,7 +445,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'horloges',
                 'views'       => 118,
                 'images'      => [
-                    $this->flick('wall-clock', 9),
+                    $this->pexels(1010480), // Round black analog wall clock
                 ],
             ],
 
@@ -467,8 +467,8 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'mobilier-jardin',
                 'views'       => 341,
                 'images'      => [
-                    $this->flick('garden-furniture', 2),
-                    $this->flick('outdoor-sofa', 6),
+                    $this->pexels(6430742), // Cozy rattan sofa with cushions in tropical garden
+                    $this->pexels(1843655), // Table dining set up outdoor
                 ],
             ],
             [
@@ -485,7 +485,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'mobilier-jardin',
                 'views'       => 189,
                 'images'      => [
-                    $this->flick('outdoor-table', 5),
+                    $this->pexels(11021595), // Outdoor table set for meal
                 ],
             ],
             [
@@ -502,7 +502,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'mobilier-lounge',
                 'views'       => 156,
                 'images'      => [
-                    $this->flick('sun-lounger', 1),
+                    $this->pexels(2771921), // Sun loungers on the deck
                 ],
             ],
             [
@@ -519,7 +519,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'protections-solaires',
                 'views'       => 224,
                 'images'      => [
-                    $this->flick('parasol', 3),
+                    $this->pexels(1154638), // Woman sitting on armchair under white patio umbrella
                 ],
             ],
             [
@@ -536,7 +536,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'barbecues',
                 'views'       => 298,
                 'images'      => [
-                    $this->flick('barbecue-grill', 11),
+                    $this->pexels(7893772), // Empty barbecue grill standing in the backyard
                 ],
             ],
 
@@ -558,8 +558,8 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'linge-de-lit',
                 'views'       => 167,
                 'images'      => [
-                    $this->flick('bed-linen', 7),
-                    $this->flick('duvet-cover', 3),
+                    $this->pexels(57686),    // White bed linen
+                    $this->pexels(10061393), // Bed with white pillow and creased linen
                 ],
             ],
             [
@@ -576,7 +576,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'rideaux',
                 'views'       => 142,
                 'images'      => [
-                    $this->flick('linen-curtains', 3),
+                    $this->pexels(14688211), // Curtains on the glass window
                 ],
             ],
             [
@@ -593,7 +593,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'couvertures-plaids',
                 'views'       => 98,
                 'images'      => [
-                    $this->flick('throw-blanket', 5),
+                    $this->pexels(5806980), // Blanket with pattern on gray sofa
                 ],
             ],
             [
@@ -610,7 +610,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'housses-canape',
                 'views'       => 76,
                 'images'      => [
-                    $this->flick('sofa-cover', 2),
+                    $this->pexels(30350512), // Cozy beige sofa with slipcover in modern living room
                 ],
             ],
 
@@ -632,7 +632,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'canapes',
                 'views'       => 445,
                 'images'      => [
-                    $this->flick('leather-sofa', 9),
+                    $this->pexels(18943248), // Living room with brown leather sofa and coffee table
                 ],
             ],
             [
@@ -649,7 +649,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'lits-literie',
                 'views'       => 523,
                 'images'      => [
-                    $this->flick('bedroom-bed', 14),
+                    $this->pexels(12119234), // Spacious bedroom with king size bed
                 ],
             ],
         ];
