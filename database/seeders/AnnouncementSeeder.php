@@ -16,9 +16,16 @@ class AnnouncementSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    // ID Unsplash confirmé
     private function img(string $id): string
     {
         return "https://images.unsplash.com/photo-{$id}?w=800&q=80&fit=crop&auto=format";
+    }
+
+    // Loremflickr : même keyword+lock = toujours la même photo Flickr
+    private function flick(string $keyword, int $lock): string
+    {
+        return "https://loremflickr.com/800/600/{$keyword}?lock={$lock}";
     }
 
     public function run(): void
@@ -84,7 +91,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'fauteuils',
                 'views'       => 178,
                 'images'      => [
-                    $this->img('1598928506311-c55ded91a20c'),
+                    $this->flick('armchair', 42),
                 ],
             ],
             [
@@ -102,7 +109,7 @@ class AnnouncementSeeder extends Seeder
                 'views'       => 421,
                 'images'      => [
                     $this->img('1501045661006-fcebe0257c3f'),
-                    $this->img('1532372320572-cda25653a26d'),
+                    $this->flick('coffee-table', 7),
                 ],
             ],
             [
@@ -171,7 +178,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'armoires-placards',
                 'views'       => 289,
                 'images'      => [
-                    $this->img('1507003211169-0a1dd7228f2d'),
+                    $this->flick('wardrobe', 5),
                 ],
             ],
             [
@@ -188,7 +195,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'matelas',
                 'views'       => 198,
                 'images'      => [
-                    $this->img('1617637618760-d33a432a0fcd'),
+                    $this->flick('mattress', 3),
                 ],
             ],
             [
@@ -205,7 +212,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'commodes',
                 'views'       => 156,
                 'images'      => [
-                    $this->img('1583847268964-b28dc8f51f92'),
+                    $this->flick('dresser,drawers', 11),
                 ],
             ],
             [
@@ -240,7 +247,7 @@ class AnnouncementSeeder extends Seeder
                 'views'       => 211,
                 'images'      => [
                     $this->img('1503602642458-232111c1f7ce'),
-                    $this->img('1517248135467-4c7edcad34c4'),
+                    $this->flick('velvet-chair', 8),
                 ],
             ],
             [
@@ -313,7 +320,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'lampes-table',
                 'views'       => 97,
                 'images'      => [
-                    $this->img('1513506003901-1e6a35d44e45'),
+                    $this->flick('table-lamp', 12),
                 ],
             ],
             [
@@ -330,7 +337,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'appliques-murales',
                 'views'       => 74,
                 'images'      => [
-                    $this->img('1565793236290-2b8b890f2bfb'),
+                    $this->flick('wall-sconce', 4),
                 ],
             ],
 
@@ -370,7 +377,7 @@ class AnnouncementSeeder extends Seeder
                 'views'       => 390,
                 'images'      => [
                     $this->img('1506440027765-4fbf89cfe8e0'),
-                    $this->img('1556228453-efd6c1ff04f6'),
+                    $this->flick('rug', 15),
                 ],
             ],
             [
@@ -404,7 +411,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'vases',
                 'views'       => 87,
                 'images'      => [
-                    $this->img('1490750967-23ea6f7a7bc4'),
+                    $this->flick('ceramic-vase', 8),
                 ],
             ],
             [
@@ -421,7 +428,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'tableaux-art-mural',
                 'views'       => 203,
                 'images'      => [
-                    $this->img('1579783902614-a3fb3927b6a5'),
+                    $this->flick('abstract-painting', 4),
                 ],
             ],
             [
@@ -438,7 +445,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'horloges',
                 'views'       => 118,
                 'images'      => [
-                    $this->img('1508344928928-7d1567e22842'),
+                    $this->flick('wall-clock', 9),
                 ],
             ],
 
@@ -460,8 +467,8 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'mobilier-jardin',
                 'views'       => 341,
                 'images'      => [
-                    $this->img('1600585154340-be6161a56a0c'),
-                    $this->img('1564694160400-5f7df19a2bb7'),
+                    $this->flick('garden-furniture', 2),
+                    $this->flick('outdoor-sofa', 6),
                 ],
             ],
             [
@@ -478,7 +485,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'mobilier-jardin',
                 'views'       => 189,
                 'images'      => [
-                    $this->img('1533777857889-4be7c70b33f7'),
+                    $this->flick('outdoor-table', 5),
                 ],
             ],
             [
@@ -495,7 +502,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'mobilier-lounge',
                 'views'       => 156,
                 'images'      => [
-                    $this->img('1519710164239-da838a17fc18'),
+                    $this->flick('sun-lounger', 1),
                 ],
             ],
             [
@@ -512,7 +519,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'protections-solaires',
                 'views'       => 224,
                 'images'      => [
-                    $this->img('1504164217-4c68d15c9a5a'),
+                    $this->flick('parasol', 3),
                 ],
             ],
             [
@@ -529,7 +536,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'barbecues',
                 'views'       => 298,
                 'images'      => [
-                    $this->img('1555041469-a586c61ea9bc'),
+                    $this->flick('barbecue-grill', 11),
                 ],
             ],
 
@@ -551,8 +558,8 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'linge-de-lit',
                 'views'       => 167,
                 'images'      => [
-                    $this->img('1616279969096-e1bc0e6e5deb'),
-                    $this->img('1583847268964-b28dc8f51f92'),
+                    $this->flick('bed-linen', 7),
+                    $this->flick('duvet-cover', 3),
                 ],
             ],
             [
@@ -569,7 +576,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'rideaux',
                 'views'       => 142,
                 'images'      => [
-                    $this->img('1522771739844-6a9136e2d2e9'),
+                    $this->flick('linen-curtains', 3),
                 ],
             ],
             [
@@ -586,7 +593,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'couvertures-plaids',
                 'views'       => 98,
                 'images'      => [
-                    $this->img('1542838132-92702b101b43'),
+                    $this->flick('throw-blanket', 5),
                 ],
             ],
             [
@@ -603,7 +610,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'housses-canape',
                 'views'       => 76,
                 'images'      => [
-                    $this->img('1555041469-a586c61ea9bc'),
+                    $this->flick('sofa-cover', 2),
                 ],
             ],
 
@@ -625,7 +632,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'canapes',
                 'views'       => 445,
                 'images'      => [
-                    $this->img('1540574163026-643ea20abb98'),
+                    $this->flick('leather-sofa', 9),
                 ],
             ],
             [
@@ -642,7 +649,7 @@ class AnnouncementSeeder extends Seeder
                 'subcategory' => 'lits-literie',
                 'views'       => 523,
                 'images'      => [
-                    $this->img('1617196034183-421b4918ed10'),
+                    $this->flick('bedroom-bed', 14),
                 ],
             ],
         ];
