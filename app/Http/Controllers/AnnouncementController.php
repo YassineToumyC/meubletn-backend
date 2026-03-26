@@ -26,11 +26,17 @@ class AnnouncementController extends Controller
         }
 
         if ($request->filled('search')) {
-            $q = $request->search;
-            $query->where(function ($sub) use ($q) {
-                $sub->where('title', 'like', "%{$q}%")
-                    ->orWhere('description', 'like', "%{$q}%");
-            });
+            // Word-boundary search: each term must appear as a whole word
+            $terms = preg_split('/\s+/', trim($request->search), -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($terms as $term) {
+                $safe    = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], mb_strtolower($term));
+                $pattern = '% ' . $safe . ' %';          // space-padded for whole-word match
+                $query->where(function ($sub) use ($pattern) {
+                    $sub->whereRaw("CONCAT(' ', LOWER(title), ' ')       LIKE ?", [$pattern])
+                        ->orWhereRaw("CONCAT(' ', LOWER(description), ' ') LIKE ?", [$pattern])
+                        ->orWhereRaw("CONCAT(' ', LOWER(marque), ' ')      LIKE ?", [$pattern]);
+                });
+            }
         }
 
         if ($request->filled('condition')) {
